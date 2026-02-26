@@ -1,7 +1,9 @@
 # Add required dependencies here
 streamlit>=1.28.0
 chromadb>=0.4.0
-google-generativeai>=0.3.0
+google-genai>=0.1.0           # 👈 naya SDK (Google Gen AI)
 google-cloud-texttospeech>=2.14.0
 python-dotenv>=1.0.0
 PyPDF2>=3.0.0
+fastapi>=0.104.0              # (optional, agar use kar rahe ho)
+uvicorn>=0.24.0                # (optional)
