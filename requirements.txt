@@ -1,0 +1,8 @@
+# Add required dependencies here
+streamlit
+fastapi
+uvicorn
+chromadb
+google-generativeai
+google-cloud-texttospeech
+python-dotenv
