@@ -212,7 +212,7 @@ else:
     st.set_page_config(page_title="AIM9tutor", layout="wide")
 
 # ------------------------------------------------------------
-# Initialize Session State (same as before)
+# Initialize Session State
 # ------------------------------------------------------------
 if 'progress' not in st.session_state:
     st.session_state.progress = ProgressManager()
@@ -260,7 +260,7 @@ if 'gender' not in st.session_state:
     st.session_state.gender = "female"
 
 # ------------------------------------------------------------
-# Sidebar (same layout, now with dark theme)
+# Sidebar
 # ------------------------------------------------------------
 with st.sidebar:
     st.markdown('<div class="sidebar-title">📚 AIM9tutor</div>', unsafe_allow_html=True)
@@ -287,7 +287,16 @@ with st.sidebar:
             
             with st.spinner("Processing PDF..."):
                 chunks = process_pdf(tmp_path)
-                st.session_state.vector_store.create_collection()
+                
+                # 🔥 FIX: Clear old collection before adding new
+                st.session_state.vector_store.delete_collection()  # remove old data
+                st.session_state.vector_store.create_collection()  # create fresh
+                
+                # 🔥 FIX: Handle empty chunks (no text extracted)
+                if not chunks:
+                    st.error("❌ PDF mein koi text nahi mila. Please ek valid text-based PDF upload karein.")
+                    st.stop()
+                
                 st.session_state.vector_store.add_chunks(chunks, metadata={"source": uploaded_file.name})
                 st.success(f"📄 Indexed {len(chunks)} chunks.")
         except PDFValidationError as e:
@@ -326,7 +335,7 @@ with st.sidebar:
     competitive = st.checkbox("🚀 Competitive Mode (allow beyond PDF)")
 
 # ------------------------------------------------------------
-# Main Area (rest unchanged)
+# Main Area
 # ------------------------------------------------------------
 st.markdown('<h1 class="main-title">🧑‍🏫 AIM9tutor</h1>', unsafe_allow_html=True)
 
@@ -357,7 +366,7 @@ if st.session_state.quiz_engine is None:
     st.session_state.quiz_engine = QuizEngine(st.session_state.chat_engine, st.session_state.vector_store)
 
 # ------------------------------------------------------------
-# Mode Routing (Teach, Quiz, Doubt Chat) – no changes needed
+# Mode Routing
 # ------------------------------------------------------------
 if st.session_state.mode == "Teach":
     st.markdown('<div class="section-header">📖 Teach Mode</div>', unsafe_allow_html=True)
